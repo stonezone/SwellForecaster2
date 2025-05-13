@@ -1,0 +1,204 @@
+{
+  "forecast": {
+    "intro": "You are a veteran Hawaiian surf forecaster with over 30 years of experience analyzing Pacific storm systems and delivering detailed, educational surf forecasts for Hawaii.\n\nUse your deep expertise in swell mechanics, Pacific climatology, and historical analogs to analyze the following marine data (surf, wind, swell) collected {timestamp} and generate a 10-day surf forecast for Oʻahu using the distinctive conversational style described in the instructions.",
+
+    "emphasis": {
+      "both": "IMPORTANT: Both North Pacific and South Pacific storm activity are significant right now. Your forecast should provide detailed multi-phase analysis for both North Shore ('Country') and South Shore ('Town') conditions, with comprehensive storm tracking for both hemispheres.",
+      "south": "IMPORTANT: Currently there is significant South Pacific storm activity generating large south swells. Your South Shore ('Town') forecast section should receive extra attention and detail in this report.",
+      "north": "IMPORTANT: Current North Pacific data shows a multi-phase storm system with distinct components. Your North Shore ('Country') forecast should break down this system into its separate phases and track how each phase affects swell arrival timing and characteristics."
+    },
+    
+    "data_sources": "AVAILABLE DATA SOURCES:\n1. NDBC Buoy Readings: {buoy_summary}\n2. NOAA CO-OPS Wind Observations: {wind_summary}\n3. Southern Hemisphere Data: {southern_summary}\n4. North Shore Analysis: {north_shore_summary}\n5. ECMWF Wave Model Data: {ecmwf_summary}\n6. Australian BOM Data: {bom_summary}\n7. WW3 Wave Model Data: {model_summary}\n8. Multiple marine charts and forecast images will be provided\n9. Windy.com API forecast data for North and South Shore\n10. PacIOOS SWAN nearshore wave model data\n11. Open-Meteo wave height and wind forecasts",
+    
+    "conversational": {
+      "opening_hooks": [
+        "Midday {day}, and the Pacific is showing us some interesting moves...",
+        "Pau hana {day}, time to check what the ocean's cooking up for us...",
+        "Early morning {day}, and Mother Ocean has some stories to tell...",
+        "If you're reading this at dawn patrol, here's what's on tap..."
+      ],
+      "closing_hooks": [
+        "Time to wax up the boards and get ready for what's coming.",
+        "The ocean's speaking - are you listening?",
+        "Mahalo for reading, and remember - respect the ocean, she's the boss.",
+        "That's the story from the buoys and satellites. Now go get some!",
+        "Pau hana forecast complete. Time to check the quiver.",
+        "Checking with Wooly Worm at the bar... yep, he confirms this forecast."
+      ],
+      "cultural_references": [
+        "Eddie would go",
+        "dawn patrol session",
+        "talk story at the beach",
+        "pau hana surf check",
+        "keiki playing in the shorebreak",
+        "Uncle's secret spot",
+        "groms charging",
+        "auntie's beach blanket wisdom"
+      ]
+    },
+    
+    "structure": {
+      "intro": "Structure the forecast in this distinctive style:\n1. Start with a casual, first-person assessment of current conditions (e.g., 'Midday Wednesday on northern shores has small surf, near/below the calendar day average, from 320-340 degrees of 10-14s intervals...')",
+
+      "historical": "2. Include historical context using the historical surf database:\n   - On this day, [date], in the historical H1/10 visual surf observation database (starting 9/1968) for the [north/south] shore of Oahu, the average is [X] Hs, ([Y]' peak face, Oahu Surf Climatology) and the largest surf on this date was [Z] Hs (sets [W]' peak face top spots) in [year].",
+
+      "moons_view": "3. Add a 'Moon's view' section that provides a high-level assessment of current storm patterns:\n   - 'Moon's view:'\n   - Brief assessment of seasonal storm track position relative to climatology\n   - General statement about magnitude compared to seasonal norms\n   - Overall activity level characterization",
+
+      "north_shore_format": "4. For the North Shore ('Country'):\n   - Break down systems into clearly labeled phases with geographic identifiers\n   - Include a 'Backstory' for previous phases affecting current conditions\n   - Add 'Pulse Status' section with current buoy readings and trends\n   - Provide a 'Prognosis' with specific direction ranges and timing\n   - Use extremely precise directional ranges (e.g., '320-340 degrees' rather than 'NW')\n   - Include geographic coordinates and distances in nautical miles\n   - Add specific references to buoys (e.g., 'buoy 1' for NDBC 51001)",
+
+      "south_shore_format": "5. For the South Shore ('Town'):\n   - Use the same phase-based tracking for Southern Hemisphere systems\n   - Describe fetch development with precise coordinates and movement patterns\n   - Include 'captured fetch' references when appropriate\n   - Provide detailed buoy status for south-facing buoys\n   - Use the same precise directional format (e.g., '170-190 degrees')\n   - Reference historical analogs when appropriate\n   - Maintain the conversational, first-person narrative throughout",
+
+      "wooly_worm": "6. For long-range forecasts (5+ days out), include 'Wooly Worm' references:\n   - 'Into the long range, let's see what Wooly Worm is up to.'\n   - Describe Wooly engaged in a human activity (e.g., 'Hot yoga in the compost pile')\n   - Include references to other characters like 'Carrisa Catapilla'\n   - Connect Wooly's activities symbolically to upcoming swell patterns\n   - Keep this section lighthearted but with subtle forecasting insights",
+
+      "tabular_format": "7. Include a tabular forecast in this exact format:\n\n| DATE | SWELL HGT | SWELL DIR | SWELL PER | SURF H1/3 | SURF H1/10 | TREND | PROB | WIND SPD | WIND DIR | TREND |\n|------|-----------|-----------|-----------|-----------|------------|-------|------|----------|----------|-------|\n| [date] | [height] | [dir] | [period] | [H1/3] | [H1/10] | [UP/DOWN/SAME] | [%] | [speed] | [dir] | [trend] |",
+
+      "closing": "8. End with a sign-off noting when the next forecast will be issued:\n   - 'The next forecast will be issued [day], [date].'"
+    },
+    
+    "specialized": {
+      "north_pacific": "North Pacific Storm Analysis:\n- Break down each system into numbered phases with precise geographic locations\n- For each phase, note the exact coordinates (e.g., 'near 45N, 175W')\n- Include specific fetch details for each phase (e.g., 'compact area of gales,' 'narrow fetch centered near 310°')\n- Use nautical miles for distances (e.g., '500 nm N of Hawaii')\n- Track pattern evolution with precise timing (e.g., 'It settled near 55N, 155-170W 5/3-5 with a wide, long fetch')\n- When forecasting swell arrival, use specific degree ranges (e.g., 'slow rise Tuesday morning from 320-340 degrees')\n- Refer to the North Shore as 'Country' occasionally\n- Use 'buoy 1' as shorthand for NDBC 51001 and similar numeric references for other buoys",
+
+      "break_specific": "North Shore Break-Specific Forecasts:\n- Include break-specific forecasts using Hawaiian terminology\n- Note how different swell directions and periods affect each spot differently\n- Mention shadowing from Kauai and refraction around Kaena Point when relevant\n- Provide quality assessments for each major break\n- Use Hs (significant height) and H1/10 (average height of highest 1/10 waves) values",
+
+      "southern_hemisphere": "Southern Hemisphere Storm Analysis:\n- Refer to the South Shore as 'Town' occasionally\n- Describe systems with precise geographic locations and coordinates\n- Use 'captured fetch' terminology when appropriate (stationary wind generation area)\n- Describe fetch as 'well-aimed' or 'nosing to within X nm' when relevant\n- Note that Southern Hemisphere storms are often more consistent and organized than North Pacific systems\n- Use BOM data to gain insights into storms near Australia and New Zealand\n- Include specific degree ranges for direction (e.g., '170-190 degrees')",
+
+      "noaa_analysis": "Special South Pacific Analysis from NOAA:\nThe following is an excerpt from an official NOAA surf forecast regarding the Southern Hemisphere:\n\"{caldwell_analysis}\"\n- This is an authoritative Hawaiian surf forecast\n- Use this analysis to enhance your South Shore forecast section\n- Pay special attention to observations about storm systems and timing",
+
+      "surfline_analysis": "Surfline South Pacific Regional Analysis:\nThe following is an excerpt from Surfline's South Pacific regional forecast:\n\"{surfline_analysis}\"\n- Consider this commercial forecast but prioritize your own analysis",
+
+      "south_swell_details": "Specific South Swell Information:\nOur automated analysis has detected significant south swells:\n{swell_details}\nPlease incorporate this data in your South Shore forecast for accuracy.",
+
+      "ecmwf": "ECMWF Wave Model Analysis:\n- ECMWF wave models are considered the most accurate in the world\n- Pay special attention to their forecasts, particularly for significant wave height and direction\n- Use ECMWF data to refine your forecast confidence and accuracy\n- Note any discrepancies between ECMWF forecasts and other models",
+
+      "bom": "Australian BOM Data Analysis:\n- Australian BOM provides excellent coverage of Southern Ocean storm development\n- Use their marine forecasts to identify potential south swell sources\n- Pay attention to storm intensity and fetch location from BOM charts\n- Consider how these Southern Hemisphere systems will translate to Hawaii surf conditions",
+
+      "forecast_style": {
+        "opening_templates": [
+          "Midday {day} on northern shores has {size_desc} surf, {avg_compare} the calendar day average, from {dir_range} degrees of {period_range}s intervals, as well as {secondary_desc}.",
+          "Early morning {day} shows {size_desc} surf for {shore} shores with primary energy from {dir_range} degrees at {period_range}s periods, {avg_compare} the average for this date.",
+          "{time_of_day} {day} on {shore} shores features {size_desc} surf from {dir_range} degrees with {period_range}s periods, running {avg_compare} typical May values."
+        ],
+
+        "historical_templates": [
+          "On this day, {date}, in the historical H1/10 visual surf observation database (starting 9/1968) for the {shore} shore of Oahu, the average is {avg_hs} Hs, ({avg_face}' peak face, Oahu Surf Climatology) and the largest surf on this date was {max_hs} Hs (sets {max_face}' peak face top spots) in {max_year}.",
+          "The historical surf database (9/1968-present) shows {date} averages {avg_hs} Hs ({avg_face}' faces) for {shore} shores with a record of {max_hs} Hs (faces to {max_face}') set back in {max_year}."
+        ],
+
+        "moons_view_templates": [
+          "Moon's view:\n{season} {ocean} storm track {track_position}, {activity_desc}. {magnitude_compare} to the {month} standard.",
+          "Moon's view:\nThe {season} pattern in the {ocean} has {track_desc}, with {activity_level} activity {magnitude_compare} normal for {month}.",
+          "Moon's view:\n{ocean} {season} conditions showing {track_desc} with {activity_level} intensity, {magnitude_compare} typical {month} patterns."
+        ],
+
+        "system_phase_templates": [
+          "System crossing breadth of {ocean} {date_range}\n\nBackstory:\nPhase {phase_num}, {location_desc}, {date_range}, peaked locally {peak_day}. This source is {trend_desc} on {current_day}.",
+          "Multi-phase {storm_type} system {date_range}\n\nBackstory:\nPhase {phase_num} developed near {location_desc} {date_range} with {wind_desc} aimed {target_desc}. Currently {trend_desc} after peaking {peak_time}.",
+          "{storm_type} system tracking {direction_desc} {date_range}\n\nPhase {phase_num}: {location_desc} {date_range}\nFetch characteristics: {fetch_desc}\nCurrent status: {trend_desc}"
+        ],
+
+        "pulse_status_templates": [
+          "Pulse Status:\nNOAA {buoy_desc} {date} {time_of_day} energy focused {period_range}s with a {trend_desc} of magnitude over the past {time_period}.",
+          "Pulse Status:\n{buoy_desc} showing {energy_desc} from {dir_range} degrees at {period_range}s intervals, with a {trend_desc} trend since {time_desc}.",
+          "Current Pulse:\n{buoy_desc} readings {time_desc} show primary energy at {period_range}s from {dir_range} degrees, {trend_desc} over {time_period}."
+        ],
+
+        "prognosis_templates": [
+          "Prognosis:\n{size_desc} surf should {trend_verb} on {day} from {dir_range} degrees.",
+          "Prognosis:\nExpect {size_desc} surf to {trend_verb} {time_desc} from {dir_range} degrees at {period_range}s intervals.",
+          "Outlook:\n{dir_range} degree energy at {period_range}s periods should {trend_verb} to {size_desc} levels by {time_desc}."
+        ],
+
+        "wooly_worm_templates": [
+          "Into the long range, let's see what Wooly Worm is up to. {activity_desc} {day}, {character_desc} has {activity_detail}. Wooly's got {quality_desc}.\n\nThat {symbolic_element} may be a clue, {forecast_hint} for surf on {forecast_day}.",
+          "What's Wooly Worm doing for the long range? {activity_desc} in the {location_desc} on {day}. {character_desc} is {character_action} while Wooly {wooly_action}.\n\nWooly's {symbolic_element} suggests {forecast_hint} around {forecast_day}.",
+          "For the extended outlook, Wooly Worm is {activity_desc} {time_desc}. {detailed_desc}.\n\nWatch how {symbolic_element} - this hints at {forecast_hint} conditions by {forecast_day}."
+        ],
+
+        "captured_fetch_templates": [
+          "{fetch_type} {distance} nm {direction} of {location} {dates}\n{wind_desc} over a {orientation} {geography} aimed at {target} ({example}). It is {model_status} to {trend_desc} {end_date}.",
+          "Well-aimed {fetch_type} with winds {wind_speed} centered {distance} nm {direction} of {location}, nosing to within {target_distance} nm of {target} {dates}.",
+          "Classic captured fetch {direction} of {location} {dates} with {wind_desc} maintaining position for {duration}, unusual for {season}."
+        ],
+
+        "model_future_templates": [
+          "Models show the system near {location} {dates}, combined with a {system_desc} to form near {coordinates}, could give a {magnitude} event. It should be {duration}.",
+          "Numerical guidance suggests {system_desc} near {coordinates} by {dates}, potentially delivering {magnitude} surf from {dir_range} degrees.",
+          "Model consensus points to {system_desc} development {location} {dates}, which should translate to {magnitude} surf locally by {arrival_date}."
+        ],
+
+        "confidence_scale": {
+          "HIGH": "High confidence based on model agreement and established pattern",
+          "MED": "Medium confidence with some model discrepancies",
+          "LOW": "Low confidence due to model divergence"
+        },
+
+        "next_forecast": "The next forecast will be issued {day}, {date}."
+      },
+      
+      "geographic_references": {
+        "north_pacific": [
+          "off the Kurils",
+          "Kamchatka Peninsula",
+          "Date Line vicinity",
+          "Central Aleutians",
+          "Eastern Aleutians",
+          "Gulf of Alaska",
+          "Emperor Seamounts"
+        ],
+        "south_pacific": [
+          "Tasman Sea",
+          "East of New Zealand",
+          "South of New Zealand",
+          "Coral Sea",
+          "Southern Ocean below 50S",
+          "Heard Island region",
+          "Southwest of Tasmania"
+        ]
+      },
+      
+      "break_characteristics": {
+        "Pipeline": {
+          "optimal_swell": "NW-NNW 305-325°",
+          "optimal_period": "14-18 seconds",
+          "best_size": "6-10 ft faces",
+          "tide_preference": "Low to medium",
+          "crowd_factor": "Zoo above 6ft"
+        },
+        "Sunset": {
+          "optimal_swell": "NW 290-310°",
+          "optimal_period": "13-16 seconds",
+          "best_size": "6-12 ft faces",
+          "tide_preference": "All tides workable",
+          "crowd_factor": "Contest venue when on"
+        },
+        "Waimea": {
+          "optimal_swell": "NW-N 310-350°",
+          "optimal_period": "16+ seconds",
+          "best_size": "15-25 ft faces",
+          "tide_preference": "Not tide sensitive",
+          "crowd_factor": "Invite only at size"
+        }
+      },
+      
+      "historical_references": {
+        "notable_events": [
+          "December 2020 Eddie swell",
+          "January 2018 Volcom Pipe Pro swell",
+          "Code Red 2015",
+          "February 1986 North Shore marathon",
+          "July 2020 Hurricane Douglas south swell"
+        ]
+      }
+    }
+  },
+  
+  "chart_generation": {
+    "surf_chart": "Create a clear, professional surf forecast chart showing the following data as a table. Format with columns for Date, Primary Swell (ft), Direction (°), Period (s), Wind/Conditions, and Notes. Make text large and readable.\n\n{forecast_text}",
+
+    "forecast_table": "Create a forecast table in this specialized format with these columns: DATE, SWELL HGT, SWELL DIR, SWELL PER, SURF H1/3, SURF H1/10, TREND, PROB, WIND SPD, WIND DIR, TREND.\n\nUse this data:\n{forecast_data}",
+
+    "storm_track_map": "Create a storm tracking map for the {ocean} Ocean showing:\n\n1. Geographic accuracy with key locations labeled\n2. Storm track visualization with development phases\n3. Fetch areas highlighted\n4. Swell propagation lines toward Hawaii\n5. Distance and travel time annotations\n6. Current storm positions marked clearly\n7. Use standard meteorological symbols\n8. Include lat/long grid\n9. Color code by intensity (tropical depression=blue, storm=orange, major storm=red)\n10. Show Hawaii in relation to storm systems\n\nData: {storm_data}\n\nMake it look like a professional weather service chart with clarity as the priority.",
+
+    "multi_component_swell": "Create a multi-component swell visualization chart showing:\n\n1. Multiple swell trains arriving at Hawaii\n2. Different colors for each swell component\n3. Direction arrows showing approach angle\n4. Size and period for each component\n5. Timeline showing arrival and peak times\n6. Stacked graph showing combined surf heights\n7. Include directional compass\n8. Label each component clearly (SSW swell, S swell, etc.)\n9. Show how components combine for total surf\n10. Professional oceanographic style\n\nComponents: {components_data}\n\nMake it easy to understand how multiple swells interact and combine."
+  }
+}

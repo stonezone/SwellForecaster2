@@ -1,0 +1,245 @@
+#!/usr/bin/env python3
+# agents/buoy_agents.py - NDBC, CDIP, and other buoy data collection agents
+from __future__ import annotations
+import asyncio
+import logging
+import json
+from datetime import datetime, timedelta
+from pathlib import Path
+import utils
+
+log = logging.getLogger("buoy_agents")
+
+def clean_buoy_value(value):
+    """Clean buoy data values that may contain operators"""
+    if isinstance(value, str):
+        # Remove comparison operators
+        value = value.replace('>', '').replace('<', '').strip()
+        # Handle 'MM' (missing) values
+        if value in ['MM', 'NA', '', 'missing']:
+            return None
+    try:
+        return float(value)
+    except (ValueError, TypeError):
+        return None
+
+async def buoys(ctx, session):
+    """Enhanced NDBC buoy implementation with time series data and robust error handling"""
+    # Get both standard and North Shore specific buoys
+    buoy_ids = ["51001", "51002", "51101"]  # Standard buoys
+    north_shore_buoys = ["51000", "51003", "51004", "51101"]  # North Pacific buoys
+    cdip_buoys = ["106", "188", "098", "096"]  # CDIP buoys (Waimea, Mokapu, etc.)
+    
+    # Additional buoys for southern hemisphere tracking
+    south_buoys = ["51002", "51004", "51S12"]  # South-facing (for South Shore)
+    
+    # Combine lists, removing duplicates while preserving order
+    all_buoy_ids = []
+    for bid in buoy_ids + north_shore_buoys + south_buoys:
+        if bid not in all_buoy_ids:
+            all_buoy_ids.append(bid)
+    
+    out = []
+    
+    # Process NDBC buoys with enhanced error handling
+    for bid in all_buoy_ids:
+        # Get recent data (latest observation)
+        url = f"https://www.ndbc.noaa.gov/data/realtime2/{bid}.txt"
+        try:
+            d = await ctx.fetch(session, url)
+            if d:
+                fn = ctx.save(f"ndbc_{bid}.txt", d)
+                out.append({
+                    "source": "NDBC", 
+                    "filename": fn, 
+                    "buoy": bid,
+                    "type": "realtime", 
+                    "priority": 0, 
+                    "timestamp": utils.utcnow(),
+                    "south_facing": bid in south_buoys,
+                    "north_facing": bid in north_shore_buoys
+                })
+        except Exception as e:
+            log.warning(f"Failed to fetch realtime data for buoy {bid}: {e}")
+            # Try fallback URL
+            fallback_url = f"https://www.ndbc.noaa.gov/station_page.php?station={bid}"
+            try:
+                d = await ctx.fetch(session, fallback_url)
+                if d:
+                    fn = ctx.save(f"ndbc_{bid}_fallback.html", d)
+                    out.append({
+                        "source": "NDBC", 
+                        "filename": fn, 
+                        "buoy": bid,
+                        "type": "fallback_html", 
+                        "priority": 2, 
+                        "timestamp": utils.utcnow(),
+                        "south_facing": bid in south_buoys,
+                        "north_facing": bid in north_shore_buoys
+                    })
+            except Exception as fallback_e:
+                log.warning(f"Fallback also failed for buoy {bid}: {fallback_e}")
+        
+        # Get hourly data (last 24 hours) for time series analysis
+        hourly_url = f"https://www.ndbc.noaa.gov/data/hourly2/{bid}.txt"
+        try:
+            d = await ctx.fetch(session, hourly_url)
+            if d:
+                fn = ctx.save(f"ndbc_{bid}_hourly.txt", d)
+                out.append({
+                    "source": "NDBC", 
+                    "filename": fn, 
+                    "buoy": bid,
+                    "type": "hourly", 
+                    "priority": 0, 
+                    "timestamp": utils.utcnow(),
+                    "south_facing": bid in south_buoys,
+                    "north_facing": bid in north_shore_buoys
+                })
+        except Exception as e:
+            log.warning(f"Failed to fetch hourly data for buoy {bid}: {e}")
+            
+        # Get 10-day history for trend analysis
+        history_url = f"https://www.ndbc.noaa.gov/data/5day2/{bid}_5day.txt"
+        try:
+            d = await ctx.fetch(session, history_url)
+            if d:
+                fn = ctx.save(f"ndbc_{bid}_5day.txt", d)
+                out.append({
+                    "source": "NDBC", 
+                    "filename": fn, 
+                    "buoy": bid,
+                    "type": "history", 
+                    "priority": 1, 
+                    "timestamp": utils.utcnow(),
+                    "south_facing": bid in south_buoys,
+                    "north_facing": bid in north_shore_buoys
+                })
+        except Exception as e:
+            log.warning(f"Failed to fetch history data for buoy {bid}: {e}")
+            
+        # Get spectral wave data if available
+        spectral_url = f"https://www.ndbc.noaa.gov/data/realtime2/{bid}.spec"
+        try:
+            d = await ctx.fetch(session, spectral_url)
+            if d:
+                fn = ctx.save(f"ndbc_{bid}_spec.txt", d)
+                out.append({
+                    "source": "NDBC", 
+                    "filename": fn, 
+                    "buoy": bid,
+                    "type": "spectral", 
+                    "priority": 0, 
+                    "timestamp": utils.utcnow(),
+                    "south_facing": bid in south_buoys,
+                    "north_facing": bid in north_shore_buoys
+                })
+        except Exception as e:
+            log.warning(f"Failed to fetch spectral data for buoy {bid}: {e}")
+    
+    # Process CDIP buoys with improved error handling
+    for bid in cdip_buoys:
+        cdip_url = f"https://cdip.ucsd.edu/data_access/cdip_json.php?sp=1&xyrr=1&station={bid}&period=latest&tz=UTC"
+        try:
+            d = await ctx.fetch(session, cdip_url)
+            if d:
+                # Attempt to parse JSON to validate it's good data
+                try:
+                    json_data = json.loads(d)
+                    # Only save if we have valid data
+                    if "waveHeight" in json_data and "peakPeriod" in json_data:
+                        fn = ctx.save(f"cdip_{bid}.json", d)
+                        out.append({
+                            "source": "CDIP", 
+                            "filename": fn, 
+                            "buoy": bid,
+                            "type": "spectra", 
+                            "priority": 0, 
+                            "timestamp": utils.utcnow(),
+                            "south_facing": bid in ["096"],
+                            "north_facing": bid in ["106", "098"]
+                        })
+                    else:
+                        log.warning(f"CDIP buoy {bid} data missing required fields")
+                except json.JSONDecodeError:
+                    log.warning(f"Failed to parse CDIP JSON for buoy {bid}")
+        except Exception as e:
+            log.warning(f"Failed to fetch CDIP data for buoy {bid}: {e}")
+    
+    return out
+
+async def noaa_coops(ctx, session):
+    """Fetch NOAA CO-OPS station wind data for Hawaii with improved robustness"""
+    # Enhanced station list with location data
+    stations = {
+        "1612340": {"name": "Honolulu", "lat": 21.3067, "lon": -157.8670, "south_facing": True},
+        "1612480": {"name": "Kaneohe", "lat": 21.4331, "lon": -157.7900, "north_facing": False},
+        "1619910": {"name": "Kahului", "lat": 20.8950, "lon": -156.4769, "north_facing": True}
+    }
+    out = []
+    
+    for station_id, station_info in stations.items():
+        # Date range version - get 48 hours of data for better trend analysis
+        try:
+            today = datetime.now().strftime("%Y%m%d")
+            yesterday = (datetime.now() - timedelta(days=2)).strftime("%Y%m%d")
+            
+            # Fetch wind data with retry logic
+            for attempt in range(3):  # Try up to 3 times
+                try:
+                    wind_url = f"https://tidesandcurrents.noaa.gov/api/datagetter?station={station_id}&product=wind&begin_date={yesterday}&end_date={today}&units=english&time_zone=gmt&format=json"
+                    wind_data = await ctx.fetch(session, wind_url)
+                    
+                    if wind_data:
+                        # Validate JSON
+                        json.loads(wind_data)
+                        
+                        fn = ctx.save(f"coops_{station_info['name'].lower()}_wind.json", wind_data)
+                        out.append({
+                            "source": "NOAA-COOPS", 
+                            "type": "wind_observation",
+                            "filename": fn, 
+                            "station": station_id, 
+                            "location": station_info["name"], 
+                            "url": wind_url,
+                            "priority": 0, 
+                            "timestamp": utils.utcnow(),
+                            "south_facing": station_info.get("south_facing", False),
+                            "north_facing": station_info.get("north_facing", False),
+                            "lat": station_info["lat"],
+                            "lon": station_info["lon"]
+                        })
+                        break  # Success, no need to retry
+                except Exception as e:
+                    if attempt == 2:  # Last attempt failed
+                        log.warning(f"Failed to fetch wind data for {station_info['name']} after 3 attempts: {e}")
+                    else:
+                        log.info(f"Retrying wind data fetch for {station_info['name']} after error: {e}")
+                        await asyncio.sleep(2 ** attempt)  # Exponential backoff
+            
+            # Fetch water level data for additional context
+            try:
+                water_level_url = f"https://tidesandcurrents.noaa.gov/api/datagetter?station={station_id}&product=water_level&datum=MLLW&begin_date={yesterday}&end_date={today}&units=english&time_zone=gmt&format=json"
+                water_data = await ctx.fetch(session, water_level_url)
+                
+                if water_data:
+                    fn = ctx.save(f"coops_{station_info['name'].lower()}_water.json", water_data)
+                    out.append({
+                        "source": "NOAA-COOPS", 
+                        "type": "water_level",
+                        "filename": fn, 
+                        "station": station_id, 
+                        "location": station_info["name"], 
+                        "url": water_level_url,
+                        "priority": 1, 
+                        "timestamp": utils.utcnow(),
+                        "south_facing": station_info.get("south_facing", False),
+                        "north_facing": station_info.get("north_facing", False)
+                    })
+            except Exception as e:
+                log.warning(f"Failed to fetch water level data for {station_info['name']}: {e}")
+                
+        except Exception as e:
+            log.warning(f"Failed to process station {station_id}: {e}")
+    
+    return out
